@@ -1,2 +1,2 @@
-# gympoint
+# GymPoint
 Gym manager app
