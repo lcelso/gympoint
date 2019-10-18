@@ -67,18 +67,31 @@ class UserController {
       ),
     });
 
+    const { email, password, oldPassword, confirmPassword } = req.body;
+    const user = await User.findByPk(req.userId);
+
+    if (email !== user.email) {
+      const userExist = await User.findOne({ where: { email } });
+
+      if (userExist) {
+        return res.status(400).json({ error: 'User already exists.' });
+      }
+      return res.status(400).json({ error: 'User does not exist.' });
+    }
+
+    if (oldPassword && !(await user.checkPassword(oldPassword))) {
+      return res.status(401).json({ error: 'Password does not match.' });
+    }
+
+    if (confirmPassword !== password) {
+      return res.status(401).json({ error: 'New password does not match.' });
+    }
+
     if (!(await schemaUser.isValid(req.body))) {
       return res.status(400).json({ error: 'Validations fails.' });
     }
 
-    const { email } = req.body;
-    const user = await User.findOne({ where: { email: req.body.email } });
-
-    if (!user) {
-      return res.status(400).json({ error: 'User does not exist.' });
-    }
-
-    const { id, name, password } = await user.update(req.body);
+    const { id, name } = await user.update(req.body);
 
     return res.json({
       id,
