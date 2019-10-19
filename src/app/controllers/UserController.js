@@ -4,19 +4,8 @@ import User from '../models/User';
 
 class UserController {
   async index(req, res) {
-    const { email } = req.body;
-
-    const user = await User.findOne({ where: { email } });
-
-    if (!user) {
-      return res.status(400).json({ error: 'User does not exist.' });
-    }
-
-    return res.json({
-      id: user.id,
-      name: user.name,
-      email,
-    });
+    const user = await User.findAll();
+    return res.json(user);
   }
 
   async store(req, res) {
@@ -109,7 +98,6 @@ class UserController {
       return res.status(400).json({ error: 'User does not exist.' });
     }
 
-    // eslint-disable-next-line consistent-return
     return User.destroy({ where: { id: user.id } }).then(response => {
       if (response === 1) {
         res
