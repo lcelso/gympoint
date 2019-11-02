@@ -1,9 +1,19 @@
 import * as Yup from 'yup';
 import Students from '../models/Students';
+import File from '../models/File';
 
 class StudentsController {
   async index(req, res) {
-    const students = await Students.findAll();
+    const students = await Students.findAll({
+      attributes: ['id', 'name', 'email', 'age', 'tall', 'weight', 'avatar_id'],
+      include: [
+        {
+          model: File,
+          as: 'avatar',
+          attributes: ['path', 'url'],
+        },
+      ],
+    });
     return res.json(students);
   }
 
@@ -54,10 +64,12 @@ class StudentsController {
       return res.status(400).json({ error: 'Validations fails.' });
     }
 
-    const { id } = req.params;
+    const { studentId } = req.params;
     const { email } = req.body;
 
-    const students = await Students.findByPk(id);
+    const students = await Students.findByPk(studentId);
+    if (!students)
+      return res.status(400).json({ error: 'Id does not exists.' });
 
     if (email !== students.email) {
       const studentsExist = await Students.findOne({ where: { email } });
@@ -72,13 +84,13 @@ class StudentsController {
   }
 
   async delete(req, res) {
-    const student = await Students.findByPk(req.params.id);
+    const student = await Students.findByPk(req.params.studentId);
 
     if (!student) {
       return res.status(400).json({ error: 'Invalid student' });
     }
 
-    Students.destroy({ where: { id: student.id } });
+    Students.destroy({ where: { id: student.studentId } });
     return res.json({ message: `Plan ${student.name} was deleted` });
   }
 }

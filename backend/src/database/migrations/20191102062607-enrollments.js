@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('enrollment', {
+    return queryInterface.createTable('enrollments', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -21,6 +21,14 @@ module.exports = {
         onDelete: 'SET NULL',
         allowNull: true,
       },
+      start_date: {
+        type: Sequelize.DATE,
+        alowNull: false,
+      },
+      end_date: {
+        type: Sequelize.DATE,
+        alowNull: false,
+      },
       price: {
         type: Sequelize.FLOAT,
         alowwNull: false,
@@ -37,6 +45,6 @@ module.exports = {
   },
 
   down: queryInterface => {
-    return queryInterface.dropTable('enrollment');
+    return queryInterface.dropTable('enrollments');
   },
 };

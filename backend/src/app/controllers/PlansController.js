@@ -48,7 +48,7 @@ class PlansController {
       return res.status(400).json({ error: 'Validation fails.' });
     }
 
-    const { id } = req.params;
+    const { planId } = req.params;
     const { title, duration } = req.body;
 
     if (duration > 12) {
@@ -57,7 +57,7 @@ class PlansController {
         .json({ error: 'Plan duration must be less than or equal to 12' });
     }
 
-    const plans = await Plans.findByPk(id);
+    const plans = await Plans.findByPk(planId);
 
     if (title !== plans.title) {
       const planExist = await Plans.findOne({ where: { title } });
@@ -72,13 +72,13 @@ class PlansController {
   }
 
   async delete(req, res) {
-    const plan = await Plans.findByPk(req.params.id);
+    const plan = await Plans.findByPk(req.params.planId);
 
     if (!plan) {
       return res.status(400).json({ error: 'Invalid plan' });
     }
 
-    Plans.destroy({ where: { id: plan.id } });
+    Plans.destroy({ where: { id: plan.planId } });
     return res.json({ message: `Plan ${plan.title} was deleted` });
   }
 }
