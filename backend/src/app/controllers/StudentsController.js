@@ -50,6 +50,10 @@ class StudentsController {
       weight: Yup.number().required(),
     });
 
+    if (!(await schemaStudents.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validations fails.' });
+    }
+
     const { id } = req.params;
     const { email } = req.body;
 
@@ -63,28 +67,19 @@ class StudentsController {
       }
     }
 
-    if (!(await schemaStudents.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validations fails.' });
-    }
-
     const student = await students.update(req.body);
     return res.json(student);
   }
 
   async delete(req, res) {
-    const { id } = req.params;
-    const student = await Students.findOne({ where: { id } });
+    const student = await Students.findByPk(req.params.id);
 
-    return Students.destroy({ where: { id: student.id } }).then(response => {
-      if (response === 1) {
-        res
-          .status(200)
-          .json({ message: 'Student deleted successfully.' })
-          .end();
-      } else {
-        res.status(400).json('Student not deleted error');
-      }
-    });
+    if (!student) {
+      return res.status(400).json({ error: 'Invalid student' });
+    }
+
+    Students.destroy({ where: { id: student.id } });
+    return res.json({ message: `Plan ${student.name} was deleted` });
   }
 }
 

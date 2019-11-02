@@ -98,16 +98,8 @@ class UserController {
       return res.status(400).json({ error: 'User does not exist.' });
     }
 
-    return User.destroy({ where: { id: user.id } }).then(response => {
-      if (response === 1) {
-        res
-          .status(200)
-          .json({ message: 'User deleted successfully.' })
-          .end();
-      } else {
-        res.status(400).json('User not deleted error');
-      }
-    });
+    User.destroy({ where: { id: user.id } });
+    return res.json({ message: `User ${email} was deleted` });
   }
 }
 
