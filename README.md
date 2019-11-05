@@ -2,8 +2,12 @@
 ![GymPoint](https://raw.githubusercontent.com/lcelso/gympoint/master/backend/src/app/views/emails/logo.png)
 
 # GYMPOINT
-Este é um desafio proposto criar uma aplicação backend/frontend/mobile para cadastro e atualização de informações de usuários, check-in, 
-e pedidos de ajuda de uma academia fictícia, utilizando os conceitos ensinados no módulo de NodeJs.
+Este é um desafio proposto criar uma aplicação backend/frontend/mobile para uma academia.
+Contempla o CRUD completo da informações de usuários, planos da academia, vinculação do usuário com o plano utilizado, check-in, e pedidos de ajuda de uma academia fictícia.
+
+## Stack utilizada:
+
+Express, Postgres, Mongodb, Redis, Docker, Sentry e Youch, alguns detalhes abaixo:
 
 * Linting com Eslint nos padrões AirBnB
 * Prettier
