@@ -38,4 +38,4 @@ Ao mesmo tempo você deve abrir outro terminal e digitar o comando para rodar a 
 
 yarn queue ou npm run queue
 
-A aplicação não rodou? Está faltando alguma informação? Precisa de um profissional com o meu perfil? Tem um convite para meetup, hackaton ou bootcamp?
+A aplicação não rodou? Está faltando alguma informação? Precisa de um profissional com o meu perfil? Tem um convite para meetup, hackaton ou bootcamp? celsodesign@gmail.com
