@@ -37,5 +37,8 @@ routes.delete('/plans/:planId', PlansController.delete);
 routes.post('/files', upload.single('file'), FileController.store);
 
 routes.post('/enrollments', EnrollmentsController.store);
+routes.get('/enrollments', EnrollmentsController.index);
+routes.put('/enrollments/:enrollmentId', EnrollmentsController.update);
+routes.delete('/enrollments/:enrollmentId', EnrollmentsController.delete);
 
 module.exports = routes;
