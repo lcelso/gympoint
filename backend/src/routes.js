@@ -9,6 +9,7 @@ import StudentsController from './app/controllers/StudentsController';
 import PlansController from './app/controllers/PlansController';
 import FileController from './app/controllers/FileController';
 import EnrollmentsController from './app/controllers/EnrollmentsController';
+import CheckinsController from './app/controllers/CheckinsController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -17,6 +18,8 @@ const upload = multer(multerConfig);
 
 routes.post('/users', UserController.store);
 routes.post('/sessions', SessionController.store);
+
+routes.post('/students/:studentId/checkins', CheckinsController.store);
 
 routes.use(authMiddleware);
 
