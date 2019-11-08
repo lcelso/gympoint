@@ -5,11 +5,11 @@ import multerConfig from './config/multer';
 
 import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionController';
-import StudentsController from './app/controllers/StudentsController';
-import PlansController from './app/controllers/PlansController';
+import StudentController from './app/controllers/StudentController';
+import PlanController from './app/controllers/PlanController';
 import FileController from './app/controllers/FileController';
-import EnrollmentsController from './app/controllers/EnrollmentsController';
-import CheckinsController from './app/controllers/CheckinsController';
+import EnrollmentController from './app/controllers/EnrollmentController';
+import CheckinsController from './app/controllers/CheckInController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -19,7 +19,8 @@ const upload = multer(multerConfig);
 routes.post('/users', UserController.store);
 routes.post('/sessions', SessionController.store);
 
-routes.post('/students/:studentId/checkins', CheckinsController.store);
+routes.post('/students/:student_id/checkins', CheckinsController.store);
+routes.get('/students/:student_id/checkins', CheckinsController.index);
 
 routes.use(authMiddleware);
 
@@ -27,21 +28,21 @@ routes.get('/users', UserController.index);
 routes.put('/users', UserController.update);
 routes.delete('/users', UserController.delete);
 
-routes.post('/students', StudentsController.store);
-routes.get('/students', StudentsController.index);
-routes.put('/students/:studentId', StudentsController.update);
-routes.delete('/students/:studentId', StudentsController.delete);
+routes.post('/students', StudentController.store);
+routes.get('/students', StudentController.index);
+routes.put('/students/:studentId', StudentController.update);
+routes.delete('/students/:studentId', StudentController.delete);
 
-routes.get('/plans', PlansController.index);
-routes.post('/plans', PlansController.store);
-routes.put('/plans/:planId', PlansController.update);
-routes.delete('/plans/:planId', PlansController.delete);
+routes.get('/plans', PlanController.index);
+routes.post('/plans', PlanController.store);
+routes.put('/plans/:planId', PlanController.update);
+routes.delete('/plans/:planId', PlanController.delete);
 
 routes.post('/files', upload.single('file'), FileController.store);
 
-routes.post('/enrollments', EnrollmentsController.store);
-routes.get('/enrollments', EnrollmentsController.index);
-routes.put('/enrollments/:enrollmentId', EnrollmentsController.update);
-routes.delete('/enrollments/:enrollmentId', EnrollmentsController.delete);
+routes.post('/enrollments', EnrollmentController.store);
+routes.get('/enrollments', EnrollmentController.index);
+routes.put('/enrollments/:enrollmentId', EnrollmentController.update);
+routes.delete('/enrollments/:enrollmentId', EnrollmentController.delete);
 
 module.exports = routes;

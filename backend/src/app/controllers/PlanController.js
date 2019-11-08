@@ -1,9 +1,9 @@
 import * as Yup from 'yup';
-import Plans from '../models/Plans';
+import Plan from '../models/Plan';
 
-class PlansController {
+class PlanController {
   async index(req, res) {
-    const plans = await Plans.findAll();
+    const plans = await Plan.findAll();
 
     return res.json(plans);
   }
@@ -19,15 +19,15 @@ class PlansController {
       return res.status(400).json({ error: 'Validation fails.' });
     }
 
-    const plansExists = await Plans.findOne({
+    const planExists = await Plan.findOne({
       where: { title: req.body.title },
     });
 
-    if (plansExists) {
+    if (planExists) {
       return res.status(400).json({ error: 'Plans already exists.' });
     }
 
-    const { id, title, duration, price } = await Plans.create(req.body);
+    const { id, title, duration, price } = await Plan.create(req.body);
 
     return res.json({
       id,
@@ -50,37 +50,38 @@ class PlansController {
 
     const { planId } = req.params;
     const { title, duration } = req.body;
+    const monthYear = 12;
 
-    if (duration > 12) {
-      return res
-        .status(400)
-        .json({ error: 'Plan duration must be less than or equal to 12' });
+    if (duration > monthYear) {
+      return res.status(400).json({
+        error: `Plan duration must be less than or equal to ${monthYear}`,
+      });
     }
 
-    const plans = await Plans.findByPk(planId);
+    const plan = await Plan.findByPk(planId);
 
-    if (title !== plans.title) {
-      const planExist = await Plans.findOne({ where: { title } });
+    if (title !== plan.title) {
+      const planExist = await Plan.findOne({ where: { title } });
 
       if (planExist) {
         return res.status(400).json({ error: 'Plan already exists.' });
       }
     }
 
-    const plan = await plans.update(req.body);
-    return res.json(plan);
+    const planUpdate = await plan.update(req.body);
+    return res.json(planUpdate);
   }
 
   async delete(req, res) {
-    const plan = await Plans.findByPk(req.params.planId);
+    const plan = await Plan.findByPk(req.params.planId);
 
     if (!plan) {
       return res.status(400).json({ error: 'Invalid plan' });
     }
 
-    Plans.destroy({ where: { id: plan.planId } });
+    Plan.destroy({ where: { id: plan.planId } });
     return res.json({ message: `Plan ${plan.title} was deleted` });
   }
 }
 
-export default new PlansController();
+export default new PlanController();

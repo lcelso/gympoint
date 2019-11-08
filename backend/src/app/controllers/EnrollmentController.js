@@ -14,22 +14,22 @@ import pt from 'date-fns/locale/pt';
 
 import currencyFormatter from 'currency-formatter';
 
-import Enrollments from '../models/Enrollments';
-import Plans from '../models/Plans';
-import Students from '../models/Students';
+import Enrollment from '../models/Enrollment';
+import Plan from '../models/Plan';
+import Student from '../models/Student';
 import File from '../models/File';
 
 import WelcomeMail from '../jobs/WelcomeMail';
 import EnrollmentUpdate from '../jobs/EnrollmentUpdateMail';
 import Queue from '../../lib/Queue';
 
-class EnrollmentsController {
+class EnrollmentController {
   async index(req, res) {
-    const enrollments = await Enrollments.findAll({
+    const enrollments = await Enrollment.findAll({
       attributes: ['id', 'price', 'start_date', 'end_date'],
       include: [
         {
-          model: Students,
+          model: Student,
           as: 'student',
           attributes: ['id', 'name', 'email', 'age', 'tall', 'weight'],
           include: [
@@ -41,7 +41,7 @@ class EnrollmentsController {
           ],
         },
         {
-          model: Plans,
+          model: Plan,
           as: 'plan',
           attributes: ['id', 'title', 'duration', 'price'],
         },
@@ -62,15 +62,16 @@ class EnrollmentsController {
     }
 
     const { student_id, plan_id, start_date } = req.body;
-    const plan = await Plans.findByPk(plan_id);
-    const student = await Students.findByPk(student_id);
-    const enrollments = await Enrollments.findOne({
+    const plan = await Plan.findByPk(plan_id);
+    const student = await Student.findByPk(student_id);
+    const enrollments = await Enrollment.findOne({
       where: {
         student_id,
       },
     });
 
-    if (isBefore(parseISO(start_date), new Date())) {
+    const oldDate = isBefore(parseISO(start_date), new Date());
+    if (oldDate) {
       return res.status(400).json({ error: 'Invalid old dates.' });
     }
 
@@ -94,7 +95,7 @@ class EnrollmentsController {
     const totalPrice = price * duration;
     const end_date = addMonths(parseISO(start_date), duration);
 
-    const enrollment = await Enrollments.create({
+    const enrollment = await Enrollment.create({
       ...req.body,
       price: totalPrice,
       end_date,
@@ -128,10 +129,10 @@ class EnrollmentsController {
 
     const { enrollmentId } = req.params;
     const { student_id, plan_id, start_date } = req.body;
-    const student = await Students.findByPk(student_id);
-    const updatePlan = await Plans.findByPk(plan_id);
+    const student = await Student.findByPk(student_id);
+    const updatePlan = await Plan.findByPk(plan_id);
 
-    const enrollments = await Enrollments.findByPk(enrollmentId);
+    const enrollments = await Enrollment.findByPk(enrollmentId);
     if (!enrollments) {
       return res.status(400).json({
         error: 'The student did not register for enrollment.',
@@ -153,7 +154,9 @@ class EnrollmentsController {
       });
     }
 
-    if (isBefore(parseISO(start_date), new Date())) {
+    const oldDate = isBefore(parseISO(start_date), new Date());
+
+    if (oldDate) {
       return res.status(400).json({
         error: 'Invalid old dates.',
         message:
@@ -161,7 +164,7 @@ class EnrollmentsController {
       });
     }
 
-    const activePlan = await Plans.findByPk(enrollments.plan_id);
+    const activePlan = await Plan.findByPk(enrollments.plan_id);
     const { title: activeTitle, duration: activeDuration } = activePlan;
 
     if (activeTitle !== 'Start') {
@@ -177,11 +180,13 @@ class EnrollmentsController {
         });
 
         if (isSaturday(expectedDate)) {
-          expectedDate = addDays(expectedDate, 2);
+          const daysForWeek = 2;
+          expectedDate = addDays(expectedDate, daysForWeek);
         }
 
         if (isSunday(expectedDate)) {
-          expectedDate = addDays(expectedDate, 1);
+          const daysForWeek = 1;
+          expectedDate = addDays(expectedDate, daysForWeek);
         }
 
         const dateFull = format(expectedDate.getTime(), "'dia' dd 'de' MMMM'", {
@@ -219,15 +224,15 @@ class EnrollmentsController {
   }
 
   async delete(req, res) {
-    const enrollment = await Enrollments.findByPk(req.params.enrollmentId);
+    const enrollment = await Enrollment.findByPk(req.params.enrollmentId);
 
     if (!enrollment) {
       return res.status(400).json({ error: 'Invalid enrollment' });
     }
 
-    Enrollments.destroy({ where: { id: req.params.enrollmentId } });
+    await Enrollment.destroy({ where: { id: req.params.enrollmentId } });
     return res.json({ message: `Enrollment ${enrollment.id} was deleted` });
   }
 }
 
-export default new EnrollmentsController();
+export default new EnrollmentController();
