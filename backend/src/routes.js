@@ -10,6 +10,7 @@ import PlanController from './app/controllers/PlanController';
 import FileController from './app/controllers/FileController';
 import EnrollmentController from './app/controllers/EnrollmentController';
 import CheckinsController from './app/controllers/CheckInController';
+import HelpOrdersController from './app/controllers/HelpOrdersController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -22,7 +23,13 @@ routes.post('/sessions', SessionController.store);
 routes.post('/students/:student_id/checkins', CheckinsController.store);
 routes.get('/students/:student_id/checkins', CheckinsController.index);
 
+routes.post('/students/:student_id/help-orders', HelpOrdersController.store);
+routes.get('/students/:student_id/help-orders', HelpOrdersController.show);
+
 routes.use(authMiddleware);
+
+routes.get('/help-orders', HelpOrdersController.index);
+routes.put('/help-orders/:help_order_id/answer', HelpOrdersController.update);
 
 routes.get('/users', UserController.index);
 routes.put('/users', UserController.update);

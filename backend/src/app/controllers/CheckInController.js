@@ -9,6 +9,7 @@ import {
   endOfDay,
   addDays,
   isToday,
+  getHours,
 } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 
@@ -40,6 +41,23 @@ class CheckinsController {
     const enrollment = await Enrollment.findOne({
       where: { student_id },
     });
+
+    const [lastCheckin] = await CheckIn.find({ student_id }).sort({
+      updatedAt: 'desc',
+    });
+
+    if (lastCheckin) {
+      const { createdAt } = lastCheckin;
+      const hourPermited = getHours(createdAt) + 5;
+      const currentHour = getHours(new Date());
+      const hoursWait = hourPermited - currentHour;
+
+      if (hourPermited > currentHour) {
+        return res
+          .status(401)
+          .json({ error: `You've to wait ${hoursWait} hours to next checkin` });
+      }
+    }
 
     /**
      * Verifica se o aluno existe
